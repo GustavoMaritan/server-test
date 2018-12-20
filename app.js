@@ -2,12 +2,13 @@ const { spawn } = require('child_process');
 const path = require('path');
 const request = require('request-promise');
 
-let host, token, prefix, bat;
+let host, token, prefix, bat, keyExecute;
 
 module.exports = options => {
 	host = options.host;
 	token = options.token;
 	prefix = options.prefix;
+	keyExecute = options.keyExecute || 'RODANDO';
 
 	return {
 		host,
@@ -83,7 +84,7 @@ function start() {
 		});
 
 		bat.stdout.on('data', data => {
-			if (/RODANDO/gi.test(data)) resolve();
+			if (new RegExp(keyExecute, 'gi').test(data)) resolve();
 		});
 
 		bat.stderr.on('data', data => {});
