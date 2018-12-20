@@ -76,9 +76,6 @@ function prepareUrl(options) {
 
 function start() {
 	return new Promise((resolve, reject) => {
-		console.log('$path', process.cwd());
-		console.log('$path2', __dirname.split('node_modules')[0]);
-
 		bat = spawn('node', ['app'], {
 			shell: false,
 			cwd: __dirname.split('node_modules')[0],

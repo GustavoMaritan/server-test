@@ -1,12 +1,12 @@
 {
-  "name": "package-test-server",
+  "name": "server-test",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Gustavo Maritan <gustavomaritan@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "request": "^2.88.0",
