@@ -57,11 +57,35 @@ async function asyncReq(url, options) {
 	return requestPromise(option);
 }
 
-function req(url, options, callback) {
-	if (typeof url == 'string') {
-		options = options || {};
-		options.url = url;
-	} else if (typeof url == 'object') options = url;
+/**
+ *
+ * @param {*} url
+ * @param {*} options
+ * @param {*} callback
+ *
+ * @example
+ *
+ * server.req('url', ()=>{});
+ * server.req({options}, ()=>{});
+ */
+function req(...params) {
+	let config = {
+		options: {},
+		callback: null
+	};
+
+	params.map(x => {
+		switch (typeof x) {
+			case 'string':
+				config.options.url = x;
+			case 'object':
+				config.options = { ...config.options, ...x };
+			case 'function':
+				config.callback = x;
+			default:
+				throw { message: `Parametro invalida ${x}` };
+		}
+	});
 
 	prepareUrl(options);
 
@@ -72,7 +96,7 @@ function req(url, options, callback) {
 		json: typeof options.json == 'boolean' ? options.json : true,
 		body: options.body
 	};
-	return request(option, callback);
+	request(option, callback);
 }
 
 function prepareUrl(options) {
