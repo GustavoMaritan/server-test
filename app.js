@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const request = require('request-promise');
+const requestPromise = require('request-promise');
+const request = require('request');
 
 let host, token, prefix, bat, keyExecute;
 
@@ -14,6 +15,7 @@ module.exports = options => {
 		host,
 		token,
 		req,
+		asyncReq,
 		start,
 		stop
 	};
@@ -37,7 +39,7 @@ module.exports = options => {
  *  params: {}
  * })
  */
-async function req(url, options) {
+async function asyncReq(url, options) {
 	if (typeof url == 'string') {
 		options = options || {};
 		options.url = url;
@@ -52,7 +54,25 @@ async function req(url, options) {
 		json: typeof options.json == 'boolean' ? options.json : true,
 		body: options.body
 	};
-	return request(option);
+	return requestPromise(option);
+}
+
+function req(url, options, callback) {
+	if (typeof url == 'string') {
+		options = options || {};
+		options.url = url;
+	} else if (typeof url == 'object') options = url;
+
+	prepareUrl(options);
+
+	let option = {
+		uri: options.url,
+		method: options.method || 'get',
+		headers: Object.assign({ authorization: token }, options.headers || {}),
+		json: typeof options.json == 'boolean' ? options.json : true,
+		body: options.body
+	};
+	return request(option, callback);
 }
 
 function prepareUrl(options) {
