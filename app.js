@@ -78,42 +78,38 @@ function req(...params) {
 		switch (typeof x) {
 			case 'string':
 				config.options.url = x;
+				break;
 			case 'object':
 				config.options = { ...config.options, ...x };
+				break;
 			case 'function':
 				config.callback = x;
+				break;
 			default:
 				throw { message: `Parametro invalida ${x}` };
 		}
 	});
 
-	prepareUrl(options);
+	prepareUrl(config.options);
 
 	let option = {
-		uri: options.url,
-		method: options.method || 'get',
-		headers: Object.assign({ authorization: token }, options.headers || {}),
-		json: typeof options.json == 'boolean' ? options.json : true,
-		body: options.body
+		uri: config.options.url,
+		method: config.options.method || 'get',
+		headers: Object.assign({ authorization: token }, config.options.headers || {}),
+		json: typeof config.options.json == 'boolean' ? config.options.json : true,
+		body: config.options.body
 	};
-	request(option, callback);
+	request(option, config.callback);
 }
 
 function prepareUrl(options) {
-	options.url = [
-		host,
-		typeof options.prefix == 'boolean' && !options.prefix ? '' : prefix,
-		...options.url.split('/')
-	]
-		.filter(x => !!x)
-		.join('/');
+	options.url = [host, typeof options.prefix == 'boolean' && !options.prefix ? '' : prefix, ...options.url.split('/')].filter(x => !!x).join('/');
 
 	if (!options.params) return;
 
 	let query = [];
 	for (let i in options.params) {
-		if (options.url.includes(':' + i))
-			options.url = options.url.replace(':' + i, options.params[i]);
+		if (options.url.includes(':' + i)) options.url = options.url.replace(':' + i, options.params[i]);
 		else query.push(`${i}=${options.params[i]}`);
 	}
 	if (query.length) options.url += '?' + query.join('&');
